@@ -101,6 +101,10 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .pbtn.on { transform: translateY(2px) scale(.96); filter: brightness(1.2); }
 .dpad { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(2, 56px); gap: 6px; pointer-events: auto; }
 .dpad .pbtn { width: 60px; height: 56px; font-size: 22px; }
+.pad.center { justify-content: center; }
+.pbtn.wide { width: 96px; }
+.dpad { grid-template-columns: repeat(3, 66px); grid-template-rows: repeat(2, 60px); gap: 8px; }
+.dpad .pbtn { width: 66px; height: 60px; }
 
 /* DOM mini-games share a parchment board */
 .board {
@@ -844,9 +848,9 @@ const landStages = (k) => STAGES.filter((s) => s.land === k);
 const lastOfLand = (g) => g === STAGES.length - 1 || STAGES[g + 1].land !== STAGES[g].land;
 
 const DIFF = {
-  easy:   { label: '쉬움',   grade: '1~2학년', desc: 'O/X 문제 · 짧고 쉬운 미니게임', time: 0,  retry: 0, order: 5,  catchN: 8,  catchSp: 0.85, mem: 4, guards: 1, gStep: 0.8, bonus: 30 },
-  normal: { label: '보통',   grade: '3~4학년', desc: '3지선다 · 보통 미니게임', time: 0,  retry: 1, order: 8,  catchN: 12, catchSp: 0.7,  mem: 6, guards: 2, gStep: 0.6, bonus: 15 },
-  hard:   { label: '어려움', grade: '5~6학년', desc: '4지선다 · 20초 제한 · 긴 미니게임', time: 20, retry: 3, order: 14, catchN: 16, catchSp: 0.55, mem: 8, guards: 3, gStep: 0.45, bonus: 8 },
+  easy:   { label: '쉬움',   grade: '씨앗 · 1', desc: 'O/X 문제 · 짧고 쉬운 미니게임', time: 0,  retry: 0, order: 5,  catchN: 8,  catchSp: 0.85, mem: 4, guards: 1, gStep: 0.8, bonus: 30 },
+  normal: { label: '보통',   grade: '새싹 · 2', desc: '3지선다 · 보통 미니게임', time: 0,  retry: 1, order: 8,  catchN: 12, catchSp: 0.7,  mem: 6, guards: 2, gStep: 0.6, bonus: 15 },
+  hard:   { label: '어려움', grade: '열매 · 3', desc: '4지선다 · 20초 제한 · 긴 미니게임', time: 20, retry: 3, order: 14, catchN: 16, catchSp: 0.55, mem: 8, guards: 3, gStep: 0.45, bonus: 8 },
 };
 const NAMES = ['아브라함', '이삭', '야곱', '유다', '베레스', '헤스론', '람', '아미나답', '나손', '살몬', '보아스', '오벳', '이새', '다윗'];
 
@@ -2451,7 +2455,7 @@ GAMES.catch = (root, d, done, th = {}) => canvasGame(root, ({ cnv, c, pad }) => 
   const bl = padButton('◀', '', '왼쪽'), br = padButton('▶', '', '오른쪽');
   holdButton(bl, () => { inp.l = true; }, () => { inp.l = false; });
   holdButton(br, () => { inp.r = true; }, () => { inp.r = false; });
-  lg.append(bl, br); pad.append(lg, h('div', 'grp'));
+  const rg = h('div', 'grp'); lg.appendChild(bl); rg.appendChild(br); bl.classList.add('wide'); br.classList.add('wide'); pad.append(lg, rg);
   cnv.addEventListener('pointerdown', (e) => { ensureAudio(); dragX = e.clientX; try { cnv.setPointerCapture(e.pointerId); } catch (_) {} });
   cnv.addEventListener('pointermove', (e) => { if (dragX !== null) { const r = cnv.getBoundingClientRect(); x = Math.max(0.05, Math.min(0.95, (e.clientX - r.left) / r.width)); } });
   const endDrag = () => { dragX = null; };
@@ -2623,7 +2627,7 @@ GAMES.maze = (root, d, done, th = {}) => canvasGame(root, ({ c, pad }) => {
     dp.appendChild(b);
   };
   mk('▲', 0, -1, 2, 1, '위로'); mk('◀', -1, 0, 1, 2, '왼쪽'); mk('▼', 0, 1, 2, 2, '아래로'); mk('▶', 1, 0, 3, 2, '오른쪽');
-  pad.append(dp, h('div', 'grp'));
+  pad.classList.add('center'); pad.append(dp);
   function drawShadow(X, Y, cell) {
     const k = cell / 60, cx = X + 30 * k, cy = Y + 32 * k, bob = Math.sin(T * 3) * 2 * k;
     c.fillStyle = 'rgba(120,112,150,.78)';
