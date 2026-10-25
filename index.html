@@ -953,14 +953,15 @@ const NAMES = ['아브라함', '이삭', '야곱', '유다', '베레스', '헤�
 
 /* ===================== 저장 ===================== */
 const SAVE_KEY = 'matthew-world-v1';
-let save = { stars: {}, pos: 0, diff: 'normal', unlockAll: false, look: null, met: false, newCards: [] };
+let save = { stars: {}, pos: 0, diff: 'easy', diffSet: false, unlockAll: false, look: null, met: false, newCards: [] };
 function loadSave() {
   try {
     const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
     if (s && typeof s === 'object') {
       if (s.stars && typeof s.stars === 'object') save.stars = s.stars;
       if (Number.isInteger(s.pos)) save.pos = Math.max(0, Math.min(STAGES.length - 1, s.pos));
-      if (DIFF[s.diff]) save.diff = s.diff;
+      save.diffSet = !!s.diffSet;
+      if (DIFF[s.diff] && save.diffSet) save.diff = s.diff;
       save.unlockAll = !!s.unlockAll;
       save.look = s.look || null;
       save.met = !!s.met || Object.keys(save.stars).length > 0;
@@ -1194,6 +1195,7 @@ const BGM = {
 // 큰 지도 + 이야기 1~10
 const STORY_BGM = ['silent', 'desert', 'hill', 'wonder', 'follow', 'seed', 'bright', 'grace', 'hosanna', 'cross'];
 let bgmKey = 'joy';
+const BGM_GAIN = 2.3;
 function bgmFor(view, g) {
   if (Number.isInteger(g)) { const st = STAGES[g]; return st.land === 9 && st.idx >= 4 ? 'praise' : STORY_BGM[st.land]; }
   return view === 'big' ? 'joy' : STORY_BGM[view] || 'joy';
@@ -1210,7 +1212,7 @@ function startBgm() {
   bgmTimer = setInterval(() => {
     while (bgmNext < actx.currentTime + 0.6) {
       const T = BGM[bgmKey], [m, b] = T.notes[bgmIdx % T.notes.length];
-      if (m) tone(440 * Math.pow(2, (m - 69) / 12), b * T.tempo * 0.95, T.wave, T.vol, bgmNext - actx.currentTime);
+      if (m) tone(440 * Math.pow(2, (m - 69) / 12), b * T.tempo * 0.95, T.wave, T.vol * BGM_GAIN, bgmNext - actx.currentTime);
       bgmNext += b * T.tempo; bgmIdx = (bgmIdx + 1) % T.notes.length;
     }
   }, 150);
@@ -2851,7 +2853,7 @@ function renderDiffs() {
     const dd = DIFF[k];
     const b = h('button', 'diff-btn'); b.type = 'button'; b.dataset.d = k; b.setAttribute('aria-pressed', String(save.diff === k));
     b.append(h('span', 'd-name', dd.label), h('span', 'd-grade', dd.grade), h('span', 'd-desc', dd.desc));
-    b.addEventListener('click', () => { save.diff = k; persist(); renderDiffs(); });
+    b.addEventListener('click', () => { save.diff = k; save.diffSet = true; persist(); renderDiffs(); });
     box.appendChild(b);
   }
 }
@@ -3297,7 +3299,7 @@ $('mContinue').addEventListener('click', () => {
   requestAnimationFrame(() => placeAvatar(true));
 });
 function startNew() {
-  save.stars = {}; save.pos = 0; save.newCards = []; save.met = false; persist();
+  save.stars = {}; save.pos = 0; save.newCards = []; save.met = false; save.diff = 'easy'; save.diffSet = false; persist();
   leaveTitle(); showMap('big'); scrollDot(); requestAnimationFrame(() => placeAvatar(true));
   showInvite();
 }
