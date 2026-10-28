@@ -1,6 +1,6 @@
 // 오프라인에서도 열리게 하는 서비스 워커
 // 게임을 고친 뒤에는 아래 VERSION 숫자만 하나 올려 주세요 (예: v2 → v3)
-const VERSION = 'mtw-v16';
+const VERSION = 'mtw-v17';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {

@@ -388,6 +388,31 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .menu-row .menu-btn { min-height: 50px; font-size: 18px; }
 @media (prefers-reduced-motion: reduce) { .t-title, .t-hero .matt, #titleHero, .t-tap, .menu-card { animation: none; } }
 @media (max-height: 640px) { .t-hero .matt { width: 84px; height: 106px; } #titleHero { width: 62px; height: 82px; } .t-title { font-size: 40px; } }
+
+/* 꾸미기 선물 */
+.sw.gift, .chipbtn.gift { position: relative; }
+.sw.gift::after, .chipbtn.gift::after { content: "★"; position: absolute; top: -7px; right: -6px; font-size: 13px; color: #e0a422; text-shadow: 0 0 2px #fff, 0 0 2px #fff; }
+.sw.locked, .chipbtn.locked { opacity: .35; cursor: not-allowed; }
+.gift-note { font-size: 12px; color: #8a6a3a; margin-top: 4px; }
+/* 수료증 */
+#certOv { z-index: 45; }
+.cert { position: relative; max-width: 460px; gap: 10px; text-align: center; align-items: center; background: #fffaf0; border: 3px solid #c9a227; box-shadow: 0 0 0 6px #fffaf0, 0 0 0 8px #e3c27a, 0 8px 0 8px rgba(138,106,74,.3); }
+.cert .eyebrow { letter-spacing: .4em; }
+.cert h1 { font-size: 26px; padding-inline: 48px; }
+.cert-hero { display: flex; align-items: flex-end; justify-content: center; gap: 2px; }
+.cert-hero canvas { width: 92px; height: 120px; }
+.cert-hero .matt { width: 76px; height: 96px; }
+.cert-name { font-family: var(--f-display); font-weight: 700; font-size: 26px; color: #6b4a1a; border-bottom: 2px solid #e3c27a; padding: 0 18px 4px; }
+.cert p { font-size: 15px; line-height: 1.6; max-width: 34ch; }
+.cert-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.cert-stats span { padding: 4px 10px; border-radius: 999px; background: #efe0bf; color: #8a5a10; font-family: var(--f-display); font-weight: 700; font-size: 13px; }
+.cert-verse { font-family: var(--f-display); font-weight: 700; font-size: 15px; color: #3f6b48; }
+.cert-date { font-size: 13px; color: #6b5a48; }
+.cert-seal { position: absolute; right: 12px; top: 12px; width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #f6c454, #c9a227 70%); color: #fff; display: grid; place-items: center; font-family: var(--f-display); font-weight: 700; font-size: 13px; line-height: 1.1; box-shadow: 0 3px 0 #9c7a15; transform: rotate(12deg); }
+.cert-gift { width: 100%; padding: 10px 12px; border-radius: 14px; background: #fff3c4; border: 2px dashed #e3c27a; font-size: 14px; line-height: 1.5; }
+.cert-gift b { font-family: var(--f-display); color: #8a4f00; }
+.cert .note { font-size: 12px; color: #8c7a52; }
+.t-done { margin-top: 8px; display: inline-block; padding: 4px 14px; border-radius: 999px; background: #c9a227; color: #fff; font-family: var(--f-display); font-weight: 700; font-size: 14px; }
 /* gate question inside the wilderness maze */
 .gate-card { max-width: 480px; }
 .gate-say { padding: 10px 12px; border-radius: 14px; background: #e9e6f3; color: #3a3058; font-size: 16px; line-height: 1.5; }
@@ -478,6 +503,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
         <div class="eyebrow t-eye">초등부 성경 탐험</div>
         <h1 class="t-title">마태복음<br><span>탐험 월드</span></h1>
         <p class="t-sub">마태와 함께 떠나는 예수님 이야기</p>
+        <span class="t-done" id="tDone" hidden>★ 마태복음 탐험 완주 ★</span>
       </div>
       <div class="t-hero" aria-hidden="true"><span class="matt-slot"></span><canvas id="titleHero" width="84" height="110"></canvas></div>
       <button type="button" class="t-tap" id="tapStart">화면을 눌러 시작해요</button>
@@ -488,6 +514,7 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
           <button type="button" class="menu-btn" id="mDress">꾸미기</button>
           <button type="button" class="menu-btn" id="mSet">설정</button>
         </div>
+        <button type="button" class="menu-btn" id="mCert" hidden>마태의 마지막 이야기 · 수료증</button>
       </div>
       <div class="t-credit">made by naljasky</div>
     </div>
@@ -637,6 +664,27 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
       <header class="hud"><button class="icon-btn" id="scBack" type="button">← 지도</button><div class="hud-title" id="scTitle">마태의 두루마리</div><div class="chip" id="scCount"></div></header>
       <div class="sc-tabs" id="scTabs" role="tablist" aria-label="이야기 고르기"></div>
       <div class="sc-body" id="scBody"></div>
+    </div>
+  </div>
+
+
+  <div class="overlay" id="certOv" hidden>
+    <div class="card cert" role="dialog" aria-labelledby="certTitle">
+      <div class="cert-seal" aria-hidden="true">완주<br>★</div>
+      <div class="eyebrow">수 료 증</div>
+      <h1 id="certTitle">마태복음 탐험 수료증</h1>
+      <div class="cert-hero" aria-hidden="true"><span class="matt-slot"></span><canvas id="certHero" width="92" height="120"></canvas></div>
+      <div class="cert-name" id="certName"></div>
+      <p>위 어린이는 마태와 함께 예수님 탄생부터 부활까지 마태복음 10개 이야기, 70단계를 끝까지 탐험하였기에 이 증서를 드립니다.</p>
+      <div class="cert-stats" id="certStats"></div>
+      <div class="cert-verse">"볼지어다 내가 세상 끝날까지 너희와 항상 함께 있으리라" (마 28:20)</div>
+      <div class="cert-date" id="certDate"></div>
+      <div class="cert-gift" id="certGift"><b>선물이 열렸어요!</b><br>꾸미기에서 <b>금빛 겉옷</b>과 <b>빛나는 왕관</b>을 입어 보세요.</div>
+      <p class="note">이 화면을 캡처해서 선생님께 보여 주세요.</p>
+      <div class="btn-row" style="width:100%">
+        <button class="sub-btn" type="button" id="certMap">닫기</button>
+        <button class="main-btn" type="button" id="certDress">선물 입어 보기</button>
+      </div>
     </div>
   </div>
 
@@ -953,7 +1001,7 @@ const NAMES = ['아브라함', '이삭', '야곱', '유다', '베레스', '헤�
 
 /* ===================== 저장 ===================== */
 const SAVE_KEY = 'matthew-world-v1';
-let save = { stars: {}, pos: 0, diff: 'easy', diffSet: false, unlockAll: false, look: null, met: false, newCards: [] };
+let save = { stars: {}, pos: 0, diff: 'easy', diffSet: false, ended: '', unlockAll: false, look: null, met: false, newCards: [] };
 function loadSave() {
   try {
     const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
@@ -961,6 +1009,7 @@ function loadSave() {
       if (s.stars && typeof s.stars === 'object') save.stars = s.stars;
       if (Number.isInteger(s.pos)) save.pos = Math.max(0, Math.min(STAGES.length - 1, s.pos));
       save.diffSet = !!s.diffSet;
+      save.ended = typeof s.ended === 'string' ? s.ended.slice(0, 20) : '';
       if (DIFF[s.diff] && save.diffSet) save.diff = s.diff;
       save.unlockAll = !!s.unlockAll;
       save.look = s.look || null;
@@ -981,16 +1030,27 @@ const LOOK_OPTS = {
   skin: ['#f6d7b8', '#efc39b', '#d6a06f', '#a86f45'],
   hairStyle: ['짧은 머리', '긴 머리', '곱슬머리', '묶은 머리'],
   hairColor: ['#3d2a1a', '#1c1714', '#8a5428', '#d9a84a'],
-  robe: ['#2f7fd1', '#3f9a57', '#7b4bb7', '#c8443a', '#e0a422', '#e07aa6'],
-  acc: ['없음', '두건', '별 왕관', '꽃 머리띠', '목동 지팡이'],
+  robe: ['#2f7fd1', '#3f9a57', '#7b4bb7', '#c8443a', '#e0a422', '#e07aa6', '#c9a227'],
+  acc: ['없음', '두건', '별 왕관', '꽃 머리띠', '목동 지팡이', '빛나는 왕관'],
 };
 const LOOK_LABELS = { skin: '피부색', hairStyle: '머리 모양', hairColor: '머리 색', robe: '옷 색', acc: '소품' };
 const LOOK_NAMES = {
   skin: ['밝은 피부', '보통 피부', '구릿빛 피부', '짙은 피부'],
   hairColor: ['갈색 머리', '검은 머리', '밤색 머리', '금색 머리'],
-  robe: ['하늘색 옷', '풀잎색 옷', '포도색 옷', '석류색 옷', '해바라기색 옷', '분홍색 옷'],
+  robe: ['하늘색 옷', '풀잎색 옷', '포도색 옷', '석류색 옷', '해바라기색 옷', '분홍색 옷', '금빛 겉옷'],
 };
 let look = { name: '', skin: 1, hairStyle: 0, hairColor: 0, robe: 0, acc: 0, face: '', faceStyle: 0 };
+// 엔딩을 본 아이만 고를 수 있는 선물
+const GIFT = { robe: [6], acc: [5] };
+function drawGoldCrown(c, cx, by, k = 1) {
+  c.save(); c.translate(cx, by); c.scale(k, k);
+  c.beginPath(); c.moveTo(-10, 0); c.lineTo(-10, -8); c.lineTo(-5, -3.5); c.lineTo(0, -11); c.lineTo(5, -3.5); c.lineTo(10, -8); c.lineTo(10, 0); c.closePath();
+  c.fillStyle = '#ffd65a'; c.fill(); c.lineWidth = 1.3; c.strokeStyle = '#b97c0c'; c.stroke();
+  c.fillStyle = '#fff3c4'; c.fillRect(-10, -2.2, 20, 2.2);
+  [[0, -5.5, '#e0457b'], [-6, -2.6, '#3f8fd1'], [6, -2.6, '#3f9a57']].forEach(([x, y, col]) => { c.fillStyle = col; c.beginPath(); c.arc(x, y, 1.7, 0, 7); c.fill(); });
+  c.fillStyle = 'rgba(255,255,255,.9)'; [[-10, -8], [0, -11], [10, -8]].forEach(([x, y]) => { c.beginPath(); c.arc(x, y, 1.4, 0, 7); c.fill(); });
+  c.restore();
+}
 function cleanLook(src) {
   const out = { ...look };
   if (src && typeof src === 'object') {
@@ -1047,6 +1107,8 @@ function drawPhotoHero(c, x, y, f, walk, lk) {
       c.fillStyle = col; c.beginPath(); c.arc(px, py, 3.8, 0, 7); c.fill(); c.strokeStyle = 'rgba(150,90,60,.5)'; c.lineWidth = 0.8; c.stroke();
       c.fillStyle = '#f2b632'; c.beginPath(); c.arc(px, py, 1.3, 0, 7); c.fill();
     });
+  } else if (lk.acc === 5) {
+    drawGoldCrown(c, cx, cy - R - 0.5, 1.05);
   } else if (lk.acc === 4) {
     const sx = cx + f * (R + 5);
     c.strokeStyle = '#7a5230'; c.lineWidth = 3; c.lineCap = 'round';
@@ -1064,7 +1126,7 @@ function drawHero(c, x, y, f, walk, lk) {
   if (lk.hairStyle === 3) { c.beginPath(); c.arc(x + 14 - f * 12, y + 8, 5, 0, 7); c.fill(); rr(c, x + 14 - f * 12 - 2.5, y + 8, 5, 13, 2.5); c.fill(); }
   c.fillStyle = '#5b3d22'; c.fillRect(x + 7 + sw, y + 34, 6, 10); c.fillRect(x + 15 - sw, y + 34, 6, 10);
   c.fillStyle = robe; rr(c, x + 2, y + 16, 24, 22, 7); c.fill(); c.strokeStyle = 'rgba(90,60,40,.55)'; c.lineWidth = 1; c.stroke();
-  c.fillStyle = lk.robe === 4 ? '#fff6e0' : '#f2b632'; c.fillRect(x + 2, y + 27, 24, 3);
+  c.fillStyle = lk.robe === 4 || lk.robe === 6 ? '#fff6e0' : '#f2b632'; c.fillRect(x + 2, y + 27, 24, 3);
   const photo = lk.face && faceImg && faceImg.complete && faceImg.naturalWidth;
   if (photo) {
     // 사진 얼굴: 조금 더 큰 동그라미 안에 넣고, 그린 앞머리·눈·입은 생략
@@ -1091,6 +1153,8 @@ function drawHero(c, x, y, f, walk, lk) {
       c.fillStyle = col; c.beginPath(); c.arc(x + 14 + dx, y + 2 + dy, 3.4, 0, 7); c.fill();
       c.fillStyle = '#f2b632'; c.beginPath(); c.arc(x + 14 + dx, y + 2 + dy, 1.2, 0, 7); c.fill();
     });
+  } else if (lk.acc === 5) {
+    drawGoldCrown(c, x + 14, y + 1);
   } else if (lk.acc === 4) {
     const sx = x + 14 + f * 15;
     c.strokeStyle = '#7a5230'; c.lineWidth = 3; c.lineCap = 'round';
@@ -1872,9 +1936,9 @@ function paintScene(kind, far) {
 /* 마태의 이야기 (한 줄씩 넘김) */
 let story = null;
 function tellStory(st, then) {
-  story = { lines: st.story || [], i: 0, then };
+  story = { lines: st.story || [], i: 0, then, last: st.last };
   if (!story.lines.length) { story = null; then(); return; }
-  $('stEyebrow').textContent = '마태가 들려줘요 · ' + st.verse;
+  $('stEyebrow').textContent = st.eyebrow || '마태가 들려줘요 · ' + st.verse;
   $('storyBg').innerHTML = paintScene(st.scene);
   showStoryLine();
   $('storyOv').hidden = false;
@@ -1884,7 +1948,7 @@ function showStoryLine() {
   const n = story.lines.length;
   $('stText').textContent = story.lines[story.i];
   $('stCount').textContent = (story.i + 1) + ' / ' + n;
-  $('stNext').textContent = story.i + 1 < n ? '다음 ▶' : '게임하러 가기 ▶';
+  $('stNext').textContent = story.i + 1 < n ? '다음 ▶' : (story.last || '게임하러 가기 ▶');
   $('stBack').hidden = story.i === 0;
   const b = $('stBubble'); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
 }
@@ -1934,6 +1998,7 @@ function finishStage(stars) {
   $('resultOv').hidden = false;
   $('resultOv').dataset.land = (!wasLandDone && landEnd) ? String(STAGES[cur].land) : '';
   pendingCard = prev === 0 ? cardOf(cur) : null;
+  if (cur === STAGES.length - 1 && !save.ended) { const d = new Date(); save.ended = d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; persist(); pendingEnding = true; }
 }
 $('rAgain').addEventListener('click', () => { $('resultOv').hidden = true; withCard(() => playStage(cur)); });
 $('rMap').addEventListener('click', () => {
@@ -1952,7 +2017,7 @@ function afterResult() {
   }
 }
 let pendingStory = null;
-$('lOk').addEventListener('click', () => { $('landOv').hidden = true; if (pendingStory !== null) { const k = pendingStory; pendingStory = null; openStorySheet(k); } });
+$('lOk').addEventListener('click', () => { $('landOv').hidden = true; if (pendingEnding) { pendingEnding = false; showEnding(); return; } if (pendingStory !== null) { const k = pendingStory; pendingStory = null; openStorySheet(k); } });
 function backToMap(advance) {
   stopGame();
   clearInterval(qTimerId);
@@ -2877,10 +2942,14 @@ function renderDress() {
       const b = h('button', isColor ? 'sw' : 'chipbtn', isColor ? null : v); b.type = 'button';
       if (isColor) { b.style.background = v; b.setAttribute('aria-label', LOOK_NAMES[g][i]); b.title = LOOK_NAMES[g][i]; }
       b.setAttribute('aria-pressed', String(look[g] === i));
+      const gift = (GIFT[g] || []).includes(i);
+      if (gift) { b.classList.add('gift'); if (!save.ended) { b.disabled = true; b.classList.add('locked'); b.title = '마태복음 탐험을 끝까지 마치면 열려요'; } }
       b.addEventListener('click', () => { look[g] = i; saveLook(); row.querySelectorAll('button').forEach((x, j) => x.setAttribute('aria-pressed', String(j === i))); });
       row.appendChild(b);
     });
-    wrap.append(h('div', 'field-title', LOOK_LABELS[g]), row); box.appendChild(wrap);
+    wrap.append(h('div', 'field-title', LOOK_LABELS[g]), row);
+    if (GIFT[g]) wrap.appendChild(h('div', 'gift-note', save.ended ? '★ 표시는 탐험을 끝까지 마친 선물이에요' : '★ 표시는 열 번째 이야기까지 모두 마치면 열려요'));
+    box.appendChild(wrap);
   }
 }
 function saveLook() { save.look = look; persist(); drawAvatar(); }
@@ -3055,7 +3124,7 @@ $('faceClear').addEventListener('click', () => {
 function drawAvatar() { heroOnCanvas($('avatar'), 0); }
 $('nameIn').addEventListener('input', (e) => { look.name = e.target.value.trim().slice(0, 8); saveLook(); });
 $('dressBtn').addEventListener('click', () => { $('nameIn').value = look.name; renderDress(); $('faceClear').hidden = !look.face; $('faceEditor').hidden = true; $('dressOv').hidden = false; });
-$('dRandom').addEventListener('click', () => { for (const k of Object.keys(LOOK_OPTS)) look[k] = Math.floor(Math.random() * LOOK_OPTS[k].length); saveLook(); renderDress(); });
+$('dRandom').addEventListener('click', () => { for (const k of Object.keys(LOOK_OPTS)) { let v; do { v = Math.floor(Math.random() * LOOK_OPTS[k].length); } while (!save.ended && (GIFT[k] || []).includes(v)); look[k] = v; } saveLook(); renderDress(); });
 $('dDone').addEventListener('click', () => {
   if (FE.img) { applyFace(false); $('faceEditor').hidden = true; FE.img = null; }
   $('dressOv').hidden = true; drawAvatar(); placeAvatar(true); drawTitleHero(); if (!$('titleScreen').hidden) updateMenu();
@@ -3267,6 +3336,53 @@ function cheer(ok, el) {
 }
 
 
+
+/* ===================== 엔딩 ===================== */
+let pendingEnding = false;
+function endingLines() {
+  const nm = look.name ? look.name : '친구';
+  return [
+    '와, 정말 끝까지 왔구나! 베들레헴의 아기 예수님부터 부활하신 아침까지, 너는 내 두루마리를 처음부터 끝까지 함께 읽었어.',
+    '기억나니? 나는 내 책 맨 앞에 "임마누엘", 하나님이 우리와 함께 계시다는 약속을 적었지. (마 1:23)',
+    '그리고 맨 마지막에는 예수님의 이 말씀을 적었단다. "볼지어다 내가 세상 끝날까지 너희와 항상 함께 있으리라" (마 28:20)',
+    '처음과 끝이 같은 약속이야. 예수님은 언제나 너와 함께 계셔. 학교에서도, 집에서도, 마음이 힘들 때도 말이야.',
+    '이제 네가 들은 예수님 이야기를 친구와 가족에게 들려줄래? 정말 수고 많았어, ' + nm + '! 너를 위해 작은 선물을 준비했단다.',
+  ];
+}
+function showEnding() {
+  stopGame(); setBgm('praise');
+  ['resultOv', 'pcOv', 'landOv', 'scrollOv', 'sheet'].forEach((id) => { $(id).hidden = true; });
+  tellStory({ story: endingLines(), scene: 'galilee', eyebrow: '마태의 마지막 이야기 · 마 28:20', last: '수료증 받기 ▶' }, showCert);
+}
+function confetti() {
+  document.querySelectorAll('.fx').forEach((x) => x.remove());
+  const fx = h('div', 'fx ok'); fx.setAttribute('aria-hidden', 'true'); fx.appendChild(h('div', 'fx-flash'));
+  const COL = ['#f2b632', '#e9785c', '#5aa86a', '#6aa3d9', '#c98ad9'];
+  for (let k = 0; k < 40; k++) {
+    const star = k % 3 === 0, p = h('div', 'fx-p ' + (star ? 'star' : 'dot'), star ? '★' : null);
+    const a = (k / 40) * Math.PI * 2 + Math.random() * 0.3, r = 140 + Math.random() * 200;
+    p.style.setProperty('--dx', Math.cos(a) * r + 'px'); p.style.setProperty('--dy', Math.sin(a) * r * 0.9 + 80 + 'px'); p.style.setProperty('--rot', (Math.random() * 600 - 300) + 'deg');
+    if (!star) { p.style.background = COL[k % COL.length]; p.style.width = (8 + Math.random() * 8) + 'px'; p.style.height = (6 + Math.random() * 6) + 'px'; }
+    p.style.animationDelay = (Math.random() * 0.25) + 's'; p.style.animationDuration = '1.6s';
+    fx.appendChild(p);
+  }
+  document.body.appendChild(fx); setTimeout(() => fx.remove(), 2200);
+}
+function showCert(celebrate = true) {
+  $('certName').textContent = (look.name || '마태복음 탐험가') + ' 어린이';
+  const st = $('certStats'); st.textContent = '';
+  const cards = PROMISES.filter(cardHas).length;
+  [['★ ' + totalStars() + ' / ' + STAGES.length * 3], ['약속 카드 ' + cards + ' / ' + PROMISES.length], ['난이도 ' + DIFF[save.diff].grade]].forEach(([t]) => st.appendChild(h('span', '', t)));
+  $('certDate').textContent = (save.ended || '') + ' · 초등부';
+  $('certOv').hidden = false;
+  requestAnimationFrame(() => heroOnCanvas($('certHero'), 0));
+  if (celebrate) { sfx.finish(); confetti(); }
+  $('certDress').focus({ preventScroll: true });
+}
+$('certMap').addEventListener('click', () => { $('certOv').hidden = true; if (!$('titleScreen').hidden) updateMenu(); });
+$('certDress').addEventListener('click', () => { $('certOv').hidden = true; look.robe = 6; look.acc = 5; saveLook(); $('dressBtn').click(); });
+$('mCert').addEventListener('click', () => { ensureAudio(); sfx.tap(); showEnding(); });
+
 /* ===================== 첫 화면 · 메뉴 ===================== */
 $('titleBg').innerHTML = paintScene('galilee');
 function drawTitleHero() { if (!$('titleScreen').hidden) heroOnCanvas($('titleHero'), 0); }
@@ -3277,6 +3393,7 @@ function updateMenu() {
   $('mContinueSub').textContent = prog ? (look.name ? look.name + ' · ' : '') + '★ ' + totalStars() + ' · ' + ORD[st.land] + ' 이야기 ' + (st.idx + 1) + '단계' : '아직 기록이 없어요';
   $('mContinue').classList.toggle('main', prog); $('mNew').classList.toggle('main', !prog);
   $('mNewTitle').textContent = prog ? '새로 하기' : '시작하기';
+  $('mCert').hidden = !save.ended; $('tDone').hidden = !save.ended;
   $('mNewSub').textContent = prog ? '처음부터 다시 시작해요' : '마태와 함께 첫 이야기를 떠나요';
 }
 function showTitle(withMenu) {
@@ -3285,7 +3402,7 @@ function showTitle(withMenu) {
   $('sheet').hidden = true; $('playScreen').hidden = true; $('mapScreen').hidden = true;
   $('titleScreen').hidden = false;
   $('tapStart').hidden = !!withMenu; $('menuCard').hidden = !withMenu;
-  if (withMenu) updateMenu();
+  updateMenu();
   setBgm('joy'); drawTitleHero();
   (withMenu ? $('mContinue').disabled ? $('mNew') : $('mContinue') : $('tapStart')).focus({ preventScroll: true });
 }
@@ -3331,7 +3448,7 @@ function boot() {
   buildMap();
   drawAvatar();
   requestAnimationFrame(() => placeAvatar(true));
-  if (location.hash === '#test') window.__dbg = { save, showTitle, cheer, goStory, get bgm() { return bgmKey; }, BGM, openScroll, showInvite, showPromise, PROMISES, play: playStage, get cur() { return cur; }, STAGES, buildMap, finish: (n) => { stopGame(); finishStage(n); }, showMap, enterStory };
+  if (location.hash === '#test') window.__dbg = { save, showEnding, showCert, showTitle, cheer, goStory, get bgm() { return bgmKey; }, BGM, openScroll, showInvite, showPromise, PROMISES, play: playStage, get cur() { return cur; }, STAGES, buildMap, finish: (n) => { stopGame(); finishStage(n); }, showMap, enterStory };
   scrollDot();
   if (location.hash !== '#test') showTitle(false);
   tick();
