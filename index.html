@@ -412,6 +412,11 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .cert-gift { width: 100%; padding: 10px 12px; border-radius: 14px; background: #fff3c4; border: 2px dashed #e3c27a; font-size: 14px; line-height: 1.5; }
 .cert-gift b { font-family: var(--f-display); color: #8a4f00; }
 .cert .note { font-size: 12px; color: #8c7a52; }
+.link-btn { border: 0; background: none; padding: 2px 0; font-family: var(--f-display); font-weight: 700; font-size: 14px; color: #b8621a; text-decoration: underline; cursor: pointer; }
+.cert-ask { width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 16px; background: #e5f4e4; }
+.cert-ask b { font-family: var(--f-display); font-size: 18px; color: #2f6b3e; }
+.cert-ask span { font-size: 13px; color: #4f7d5b; line-height: 1.5; }
+.cert-ask .btn-row > * { flex: 1 1 140px; }
 .t-done { margin-top: 8px; display: inline-block; padding: 4px 14px; border-radius: 999px; background: #c9a227; color: #fff; font-family: var(--f-display); font-weight: 700; font-size: 14px; }
 /* gate question inside the wilderness maze */
 .gate-card { max-width: 480px; }
@@ -679,11 +684,15 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
       <div class="cert-stats" id="certStats"></div>
       <div class="cert-verse">"볼지어다 내가 세상 끝날까지 너희와 항상 함께 있으리라" (마 28:20)</div>
       <div class="cert-date" id="certDate"></div>
-      <div class="cert-gift" id="certGift"><b>선물이 열렸어요!</b><br>꾸미기에서 <b>금빛 겉옷</b>과 <b>빛나는 왕관</b>을 입어 보세요.</div>
+      <div class="cert-gift" id="certGift"><b>선물이 열렸어요!</b><br>꾸미기에 <b>금빛 겉옷</b>과 <b>빛나는 왕관</b>이 생겼어요. <button type="button" class="link-btn" id="certDress">지금 입어 보기 ▶</button></div>
       <p class="note">이 화면을 캡처해서 선생님께 보여 주세요.</p>
-      <div class="btn-row" style="width:100%">
-        <button class="sub-btn" type="button" id="certMap">닫기</button>
-        <button class="main-btn" type="button" id="certDress">선물 입어 보기</button>
+      <div class="cert-ask">
+        <b>처음부터 다시 탐험해 볼까요?</b>
+        <span>별과 두루마리 기록은 처음부터 다시 모으고, 수료증과 선물은 그대로 남아요.</span>
+        <div class="btn-row">
+          <button class="sub-btn" type="button" id="certMap">지도로 갈래요</button>
+          <button class="main-btn" type="button" id="certAgain">네, 다시 시작!</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1998,7 +2007,7 @@ function finishStage(stars) {
   $('resultOv').hidden = false;
   $('resultOv').dataset.land = (!wasLandDone && landEnd) ? String(STAGES[cur].land) : '';
   pendingCard = prev === 0 ? cardOf(cur) : null;
-  if (cur === STAGES.length - 1 && !save.ended) { const d = new Date(); save.ended = d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; persist(); pendingEnding = true; }
+  if (cur === STAGES.length - 1 && !save.ended) { const d = new Date(); save.ended = d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일'; persist(); pendingEnding = true; setTimeout(autoEnding, 2600); }
 }
 $('rAgain').addEventListener('click', () => { $('resultOv').hidden = true; withCard(() => playStage(cur)); });
 $('rMap').addEventListener('click', () => {
@@ -3339,6 +3348,16 @@ function cheer(ok, el) {
 
 /* ===================== 엔딩 ===================== */
 let pendingEnding = false;
+// 마지막 골든벨을 처음 마치면 결과 창을 잠깐 보여 준 뒤 저절로 엔딩으로
+function autoEnding() {
+  if (!pendingEnding) return;
+  pendingEnding = false; pendingCard = null;
+  stopGame(); clearInterval(qTimerId);
+  ['resultOv', 'quizOv', 'introOv', 'landOv'].forEach((id) => { $(id).hidden = true; });
+  $('playScreen').hidden = true; $('titleScreen').hidden = true; $('mapScreen').hidden = false;
+  showMap(STAGES[cur].land);
+  showEnding();
+}
 function endingLines() {
   const nm = look.name ? look.name : '친구';
   return [
@@ -3377,9 +3396,10 @@ function showCert(celebrate = true) {
   $('certOv').hidden = false;
   requestAnimationFrame(() => heroOnCanvas($('certHero'), 0));
   if (celebrate) { sfx.finish(); confetti(); }
-  $('certDress').focus({ preventScroll: true });
+  $('certAgain').focus({ preventScroll: true });
 }
-$('certMap').addEventListener('click', () => { $('certOv').hidden = true; if (!$('titleScreen').hidden) updateMenu(); });
+$('certMap').addEventListener('click', () => { $('certOv').hidden = true; if (!$('titleScreen').hidden) updateMenu(); else setBgm(bgmFor(mapView)); });
+$('certAgain').addEventListener('click', () => { $('certOv').hidden = true; sfx.tap(); startNew(); });
 $('certDress').addEventListener('click', () => { $('certOv').hidden = true; look.robe = 6; look.acc = 5; saveLook(); $('dressBtn').click(); });
 $('mCert').addEventListener('click', () => { ensureAudio(); sfx.tap(); showEnding(); });
 
